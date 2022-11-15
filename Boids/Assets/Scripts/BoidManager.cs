@@ -6,6 +6,7 @@ public class BoidManager : MonoBehaviour
 {
     public BoidBehaviour boidPrefab;
     public int spawnboids = 20;
+
     private List<BoidBehaviour> boids;
 
     void Start()
@@ -28,10 +29,10 @@ public class BoidManager : MonoBehaviour
 
     private void SpawnBoid (GameObject prefab, int swarmIndex)
     {
-        var boidInstance = Instantiate(prefab);
+        GameObject boidInstance = Instantiate(prefab);
         boidInstance.transform.localPosition += new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10));
 
-        var boidBehaviour = boidInstance.GetComponent<BoidBehaviour>();
+        BoidBehaviour boidBehaviour = boidInstance.GetComponent<BoidBehaviour>();
         boids.Add(boidBehaviour);
     }
 }

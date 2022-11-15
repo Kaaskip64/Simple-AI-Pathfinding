@@ -12,12 +12,12 @@ public class BoidBehaviour : MonoBehaviour
 
     public void SimulateMovement(List<BoidBehaviour> other, float time)
     {
-        var steering = Vector3.zero;
-        var alignmentDirection = Vector3.zero;
-        var alignmentCount = 0;
-        var cohesionDirection = Vector3.zero;
-        var cohesionCount = 0;
+        Vector3 steering = Vector3.zero;
+        Vector3 alignmentDirection = Vector3.zero;
+        Vector3 cohesionDirection = Vector3.zero;
 
+        int alignmentCount = 0;
+        int cohesionCount = 0;
         int separationCount = 0;
 
         transform.position += transform.TransformDirection(new Vector3(0, 0, speed)) * time;
@@ -30,21 +30,18 @@ public class BoidBehaviour : MonoBehaviour
             {
                 continue;
             }
-            var distance = Vector3.Distance(boid.transform.position, transform.position);
+            float distance = Vector3.Distance(boid.transform.position, transform.position);
 
             if (distance < noClumpingRadius)
             {
-                separationDirection += boid.transform.position - transform.position;
-                separationCount++;
+                Seperation(ref separationDirection, boid, ref separationCount);
             }
 
             if (distance < localAreaRadius)
             {
-                alignmentDirection += boid.transform.forward;
-                alignmentCount++;
+                Alignment(ref alignmentDirection, boid, ref alignmentCount);
 
-                cohesionDirection += boid.transform.position - transform.position;
-                cohesionCount++;
+                Cohesion(ref cohesionDirection, boid, ref cohesionCount);
             }
         }
 
@@ -54,12 +51,12 @@ public class BoidBehaviour : MonoBehaviour
         {
             separationDirection /= separationCount;
         }
+
         separationDirection = -separationDirection.normalized;
 
         steering = separationDirection;
 
         steering += alignmentDirection;
-
         steering += cohesionDirection;
 
         if (steering != Vector3.zero)
@@ -67,5 +64,22 @@ public class BoidBehaviour : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(steering), steeringSpeed * time);
         }
 
+    }
+
+    public void Seperation(ref Vector3 separationDirection, BoidBehaviour boid, ref int separationCount)
+    {
+        separationDirection += boid.transform.position - transform.position;
+        separationCount++;
+    }
+    public void Alignment(ref Vector3 alignmentDirection, BoidBehaviour boid, ref int alignmentCount)
+    {
+        alignmentDirection += boid.transform.forward;
+        alignmentCount++;
+    }
+
+    public void Cohesion(ref Vector3 cohesionDirection, BoidBehaviour boid, ref int cohesionCount)
+    {
+        cohesionDirection += boid.transform.position - transform.position;
+        cohesionCount++;
     }
 }
